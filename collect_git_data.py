@@ -2,7 +2,6 @@ from git import Repo, GitCommandError
 from bug_item import BugItem, generate_bug_items
 import os
 import shutil
-from random import choice
 from random import sample
 
 
@@ -64,15 +63,48 @@ def collect_nobug_codes(items, repo_dir, codes_dir):
             i += 1
 
 
+def collect_description_summary(items, repo_dir, codes_dir):
+    for item in items:
+        i = 0
+        for filename in item.jfiles:
+            filename0 = item.commit + "{:03d}".format(i + 500)
+            codes_filename = filename0 + ".java"
+            if os.path.exists(os.path.join(codes_dir + codes_filename)):
+                description_filename = filename0 + ".description"
+                with open(os.path.join(codes_dir, description_filename), "a") as file_obj:
+                    file_obj.write(item.summary + " " + item.description)
+            i += 1
+
+        for i in range(0, 5):
+            filename0 = item.commit + "{:03d}".format(i)
+            codes_filename = filename0 + ".java"
+            if os.path.exists(os.path.join(codes_dir + codes_filename)):
+                description_filename = filename0 + ".description"
+                with open(os.path.join(codes_dir, description_filename), "a") as file_obj:
+                    file_obj.write(item.summary + " " + item.description)
+
+
+def check_files(codes_dir):
+    for filename in os.listdir(codes_dir):
+        filename0 = filename.split(".")[0]
+        if os.path.exists(os.path.join(codes_dir, filename0 + ".java")) and \
+        os.path.exists(os.path.join(codes_dir, filename0 + ".description")):
+            continue
+        else:
+            print(filename)
+            return
+
+    print("All Is Fine!!")
+
 
 if __name__ == '__main__':
     repo_dir = "./../datasets/repos/org.aspectj/"
     codes_dir = "./../datasets/AspectJ/codes/"
 
     filename = "./../datasets/AspectJ.txt"
-    items = generate_bug_items(filename)
-    del items[0]
+#    items = generate_bug_items(filename)
+#    del items[0]
 #    collect_git_codes(items, repo_dir, codes_dir)
-
-    collect_nobug_codes(items, repo_dir, codes_dir)
-
+#    collect_nobug_codes(items, repo_dir, codes_dir)
+#    collect_description_summary(items, repo_dir, codes_dir)
+    check_files(codes_dir)
