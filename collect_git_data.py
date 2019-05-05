@@ -2,6 +2,8 @@ from git import Repo, GitCommandError
 from bug_item import BugItem, generate_bug_items
 import os
 import shutil
+from random import choice
+from random import sample
 
 
 def collect_git_codes(items, repo_dir, codes_dir):
@@ -29,17 +31,48 @@ def collect_git_codes(items, repo_dir, codes_dir):
                     print(item.bug_id + " " + item.commit + " " + f)
 
             if os.path.exists(repo_dir + f):
-                codes_file_name = item.commit + "{:03d}".format(i) + ".java"
+                codes_file_name = item.commit + "{:03d}".format(i + 500) + ".java"
                 shutil.copyfile(repo_dir + f, codes_dir + codes_file_name)   
 
             i += 1
 
 
-if __name__ == '__main__':
-    repo_dir = "./../datasets/repos/eclipse.platform.ui/"
-    codes_dir = "./../datasets/eclipseUI/codes/"
+def collect_nobug_codes(items, repo_dir, codes_dir):
+    bug_files = set()
+    nobug_files = set()
+    for item in items:
+        for f in item.jfiles:
+            if not f.endswith("java"):
+                continue
 
-    filename = "./../datasets/Eclipse_Platform_UI.txt"
+            bug_files.add(f)
+
+    for dirpath, dirnames, filenames in os.walk(repo_dir):
+        for filename in filenames:
+            fullname = os.path.join(dirpath, filename)
+            name = fullname[len(repo_dir):]
+            if name.endswith("java") and (name not in bug_files):
+                nobug_files.add(name)
+
+    for item in items:
+        random_files = sample(nobug_files, 5)
+        i = 0
+        for random_file in random_files:
+            if os.path.exists(repo_dir + random_file):
+                codes_file_name = item.commit + "{:03d}".format(i) + ".java"
+                shutil.copyfile(repo_dir + random_file, codes_dir + codes_file_name)
+            i += 1
+
+
+
+if __name__ == '__main__':
+    repo_dir = "./../datasets/repos/org.aspectj/"
+    codes_dir = "./../datasets/AspectJ/codes/"
+
+    filename = "./../datasets/AspectJ.txt"
     items = generate_bug_items(filename)
     del items[0]
-    collect_git_codes(items, repo_dir, codes_dir)
+#    collect_git_codes(items, repo_dir, codes_dir)
+
+    collect_nobug_codes(items, repo_dir, codes_dir)
+
