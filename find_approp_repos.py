@@ -1,51 +1,57 @@
 import requests
 
 
-headers = {"Authorization": "token 5247e606725afbecaee346ebcaaca3990b0b7b21"}
-
-
-def run_query(query):
+def run_query(query, headers):
     request = requests.post('https://api.github.com/graphql', json={'query': query}, headers=headers)
     if request.status_code == 200:
         return request.json()
     else:
         raise Exception("Query failed to run by returning code of {0}. {1}".format(request.status_code, \
-                query))
+            query))
 
 
-query = """
-        {
-          gson: repository(owner: "google", name: "gson") {
-            ...RepoFragment
-          }
-          martian: repository(owner: "google", name: "martian") {
-            ...RepoFragment
-          }
-          keyboard: repository(owner: "jasonrudolph", name: "keyboard") {
-            ...RepoFragment
-          }
-        }
+if __name__ == '__main__':
+    headers = {"Authorization": "token 3edbeb13fc20a225a00de809867acd3caf7edec7"}
 
-        fragment RepoFragment on Repository {
-          name
-          refs(first: 100, refPrefix: "refs/heads/") {
-            edges {
-              node {
-                name
-                target {
-                  ... on Commit {
-                    id
-                    history(first: 0) {
-                      totalCount
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        """
+    for lang in ["Java", "C", "Python", "C++", "C#", "JavaScript", "PHP", "Swift", "Objective-C", "Ruby", \
+            "Groovy", "Go", "Perl", "R", "Lua", "Scala", "Rust", "Haskell", "Clojure", "shell"]:
+        query = """
+                {{
+                  search(query: "language:{0} stars:>500", type: REPOSITORY, first: 100) {{
+                    repositoryCount
+                    edges {{
+                      node {{
+                        ... on Repository {{
+                          name
+                          description
+                          url
+                          stargazers {{
+                            totalCount
+                          }}
+                          forks {{
+                            totalCount
+                          }}
+                          updatedAt
+                          defaultBranchRef {{
+                            name
+                            target {{
+                              ... on Commit {{
+                                id
+                                history(first: 0) {{
+                                  totalCount
+                                }}
+                              }}
+                            }}
+                          }}
+                        }}
+                      }}
+                    }}
+                  }}
+                }}
+                """.format(lang)
+    
 
-result = run_query(query)
-total_count_gson = result["data"]["gson"]["refs"]["edges"][0]["node"]["target"]["history"]["totalCount"]
-print("Total Count Gson - {}".format(total_count_gson))
+    result = run_query(query, headers)
+    total_count1 = result["data"]["search"]["edges"][0]["node"]["defaultBranchRef"]["target"]["history"]["totalCount"]
+    print("Total Count Gson - {}".format(total_count1))
+#     print(result)
