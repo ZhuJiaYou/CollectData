@@ -15,9 +15,40 @@ if __name__ == '__main__':
 
     with open("/srv/bug_repos/repo_star500_commit2000_list.txt", "w") as f:
         f.write("LANGUAGE\tNAME\tOWNER\tSTARS\tCOMMITS\tURL\tDESCRIPTION\n")
-    for lang in ["Java", "Python", "C#", "JavaScript", "PHP", "Swift", "Objective-C", "Groovy", "Go", \
-            "Perl", "R", "Lua", "Scala", "Rust", "Haskell", "Clojure", "shell"]:  # C, C++, Ruby
-        query = """
+    for lang in ["C", "C++", "Ruby"]:  # C, C++, Ruby
+        query1 = """
+                {{
+                  search(query: "language:{0} stars:>500", type: REPOSITORY, first: 100) {{
+                    repositoryCount
+                    edges {{
+                      node {{
+                        ... on Repository {{
+                          name
+                          owner {{
+                            login
+                          }}
+                          description
+                          url
+                          stargazers {{
+                            totalCount
+                          }}
+                          defaultBranchRef {{
+                            name
+                            target {{
+                              ... on Commit {{
+                                history {{
+                                  totalCount
+                                }}
+                              }}
+                            }}
+                          }}
+                        }}
+                      }}
+                    }}
+                  }}
+                }}
+                """.format(lang)
+        query1 = """
                 {{
                   search(query: "language:{0} stars:>500", type: REPOSITORY, first: 100) {{
                     repositoryCount
