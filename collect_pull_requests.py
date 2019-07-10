@@ -1,4 +1,4 @@
-import requests
+import requests, time
 from repository import Repository
 
 
@@ -6,15 +6,22 @@ def run_query(query, headers):
     request = requests.post('https://api.github.com/graphql', json={'query': query}, headers=headers)
     if request.status_code == 200:
         return request.json()
-    else:
+    # while request.status_code == 403 or request.status_code == 502:
+    while request.status_code != 200:
+        print("WRONG STATUS CODE - {}".format(request.status_code))
+        time.sleep(5)
+        request = requests.post('https://api.github.com/graphql', json={'query': query}, headers=headers)
+    
+    if request.status_code != 200:
         raise Exception("Query failed to run by returning code of {0}. {1}".format(request.status_code,
                                                                                    query))
+    return request.json()
 
 
 if __name__ == '__main__':
     REPOS_DIR_PRE = "/srv/bug_repos"
 
-    with open("/srv/bug_repos/test.txt", "r") as f:
+    with open("/srv/bug_repos/repo_star500_commit2000_list.txt", "r") as f:
         for line in f:
             if line[:6] != "NOTICE" and line[:8] != "LANGUAGE":
                 repo = Repository(line.strip())
@@ -22,13 +29,13 @@ if __name__ == '__main__':
                 print(line)
                 continue
 
-            headers = {"Authorization": "token f09127419c353fb9f93b650a5ca4ad6021f44b61"}
+            headers = {"Authorization": "token 837fcd95fa040d52baff6ba4d212613582792412"}
             end_cursor = "null"
             has_next_page = True
             flag = True
 
-            with open("/srv/bug_repo_info/{0}{1}{2}.txt".format(repo.language, repo.owner, repo.name),
-                      "w") as f:
+            with open("/srv/bug_repo_info/pull_request/{0}_{1}_{2}.txt".format(repo.language, repo.owner, 
+                                                                             repo.name), "w") as f:
                 f.write("NUMBER\tTITLE\tAUTHER\tCREATE_TIME\tMERGE_COMMIT\tDESCRIPTION\t" + 
                         "FIRST_COMMENT_AUTHER\tFIRST_COMMENT_TIME\tFIRST_COMMENT\n")
 
@@ -62,6 +69,15 @@ if __name__ == '__main__':
                                 mergeCommit {{
                                   abbreviatedOid
                                 }}
+                                timelineItems(first: 10, itemTypes: [MERGED_EVENT]) {{
+                                    nodes {{
+                                      ... on MergedEvent {{
+                                        commit {{
+                                          abbreviatedOid
+                                        }}
+                                      }}
+                                    }}
+                                }}
                               }}
                             }}
                             pageInfo {{
@@ -74,26 +90,38 @@ if __name__ == '__main__':
                 flag = False
                 result = run_query(query, headers)
                 if list(result.keys())[0] != "data":
-                    print(repo.language + " - " + repo.owner + " - " + repo.name + " - " + result)
+                    print(repo.language + " - " + repo.owner + " - " + repo.name + " - " + str(result))
                     continue
                 for edge in result["data"]["repository"]["pullRequests"]["edges"]:
                     number = edge["node"]["number"]
                     title = edge["node"]["title"]
-                    author = edge["node"]["author"]["login"]
+                    if not edge["node"]["author"]:
+                        author = "ghost"
+                    else:
+                        author = edge["node"]["author"]["login"]
                     description = edge["node"]["bodyText"]
                     create_time = edge["node"]["createdAt"]
-                    merge_commit_1 = edge["node"]["mergeCommit"]
-                    print(str(merge_commit_1) + description + str(number))
-                    merge_commit = edge["node"]["mergeCommit"]  # ["abbreviatedOid"]
+                    # merge_commit = edge["node"]["mergeCommit"]["abbreviatedOid"]
+                    if edge["node"]["timelineItems"]["nodes"] and edge["node"]["timelineItems"]["nodes"][0]["commit"]:
+                        merge_commit = edge["node"]["timelineItems"]["nodes"][0]["commit"]["abbreviatedOid"]
+                    else:
+                        merge_commit = "None"
+                        with open("/srv/bug_repo_info/pull_request/error_log.txt", "a") as f:
+                            f.write("{0}\t{1}\t{2}\t{3}\n".format(repo.language, repo.url, number, title))
+                        print(str(number) + " - " + title)
+
                     if edge["node"]["comments"]["edges"]:
                         first_comment = edge["node"]["comments"]["edges"][0]["node"]["bodyText"]
-                        first_comment_author = edge["node"]["comments"]["edges"][0]["node"]["author"]["login"]
+                        if edge["node"]["comments"]["edges"][0]["node"]["author"]:
+                            first_comment_author = edge["node"]["comments"]["edges"][0]["node"]["author"]["login"]
+                        else:
+                            first_comment_author = "ghost"
                         first_comment_time = edge["node"]["comments"]["edges"][0]["node"]["createdAt"]
                     else:
                         first_comment = ""
                         first_comment_author = ""
                         first_comment_time = ""
-                    with open("/srv/bug_repo_info/{0}{1}{2}.txt".format(repo.language, repo.owner, repo.name),
+                    with open("/srv/bug_repo_info/pull_request/{0}_{1}_{2}.txt".format(repo.language, repo.owner, repo.name),
                               "a") as f:
                         f.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
                             number, title, author, create_time, merge_commit, description, 

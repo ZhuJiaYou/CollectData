@@ -21,7 +21,8 @@ with open("/srv/bug_repos/repo_star500_commit2000_list.txt", "r") as f:
         except GitCommandError:
             print("{} - {} - {} ERROR!".format(repo.language, repo.owner, repo.name))
 
-        with open("/srv/bug_repo_info/{}_{}_{}.txt".format(repo.language, repo.owner, repo.name), "w") as fw:
+        with open("/srv/bug_repo_info/git_log/{}_{}_{}.txt".format(repo.language, repo.owner, repo.name),
+                  "w") as fw:
             fw.write(logs.encode("utf-8", errors="xmlcharrefreplace").decode("utf-8"))
             count2 += 1
 
