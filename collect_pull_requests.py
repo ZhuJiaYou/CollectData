@@ -29,7 +29,7 @@ if __name__ == '__main__':
                 print(line)
                 continue
 
-            headers = {"Authorization": "token 837fcd95fa040d52baff6ba4d212613582792412"}
+            headers = {"Authorization": "token 2ee68b8c2b89468c6e8b2fe98d1748cdac7b0a1e"}
             end_cursor = "null"
             has_next_page = True
             flag = True
