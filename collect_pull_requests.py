@@ -1,4 +1,4 @@
-import requests, time
+import requests, time, re
 from repository import Repository
 
 
@@ -21,7 +21,7 @@ def run_query(query, headers):
 if __name__ == '__main__':
     REPOS_DIR_PRE = "/srv/bug_repos"
 
-    with open("/srv/bug_repos/repo_star500_commit2000_list.txt", "r") as f:
+    with open("/srv/bug_repo_info/selected/selected_repos.txt", "r") as f:
         for line in f:
             if line[:6] != "NOTICE" and line[:8] != "LANGUAGE":
                 repo = Repository(line.strip())
@@ -29,12 +29,12 @@ if __name__ == '__main__':
                 print(line)
                 continue
 
-            headers = {"Authorization": "token 2ee68b8c2b89468c6e8b2fe98d1748cdac7b0a1e"}
+            headers = {"Authorization": "token 1ddd5ca713b08eed6c014c620b932ee73fbdedfd"}
             end_cursor = "null"
             has_next_page = True
             flag = True
 
-            with open("/srv/bug_repo_info/pull_request/{0}_{1}_{2}.txt".format(repo.language, repo.owner, 
+            with open("/srv/bug_repo_info/selected/pr/{0}_{1}_{2}.txt".format(repo.language, repo.owner, 
                                                                              repo.name), "w") as f:
                 f.write("NUMBER\tTITLE\tAUTHER\tCREATE_TIME\tMERGE_COMMIT\tDESCRIPTION\t" + 
                         "FIRST_COMMENT_AUTHER\tFIRST_COMMENT_TIME\tFIRST_COMMENT\n")
@@ -121,7 +121,14 @@ if __name__ == '__main__':
                         first_comment = ""
                         first_comment_author = ""
                         first_comment_time = ""
-                    with open("/srv/bug_repo_info/pull_request/{0}_{1}_{2}.txt".format(repo.language, repo.owner, repo.name),
+
+                    title = re.sub(r"\s+", " ", title)
+                    author = re.sub(r"\s+", " ", author)
+                    description = re.sub(r"\s+", " ", description)
+                    first_comment_author = re.sub(r"\s+", " ", first_comment_author)
+                    first_comment = re.sub(r"\s+", " ", first_comment)
+
+                    with open("/srv/bug_repo_info/selected/pr/{0}_{1}_{2}.txt".format(repo.language, repo.owner, repo.name),
                               "a") as f:
                         f.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
                             number, title, author, create_time, merge_commit, description, 

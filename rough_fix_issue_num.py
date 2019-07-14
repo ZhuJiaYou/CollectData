@@ -32,3 +32,4 @@ with open("/srv/bug_repos/repo_star500_commit2000_list.txt", "r") as f:
             fi.write("{}\t{}\t{}\n".format(filename, count_git_log, count_pull_request))
 
 print("ALL IS FINE!")
+

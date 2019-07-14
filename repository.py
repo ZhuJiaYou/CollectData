@@ -17,7 +17,7 @@ class Repository:
 if __name__ == '__main__':
     REPOS_DIR_PRE = "/srv/bug_repos"
 
-    with open("/srv/bug_repos/repo_star500_commit2000_list.txt", "r") as f:
+    with open("/srv/bug_repo_info/selected/selected_repos.txt", "r") as f:
         for line in f:
             if line[:6] != "NOTICE":
                 repo = Repository(line.strip())
