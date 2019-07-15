@@ -4,4 +4,4 @@ class CommitLog:
         self.commit_id = elem_list[0]
         self.commit_time = elem_list[2]
         self.commit_author = elem_list[1]
-        self.commit_message = [3]
+        self.commit_message = elem_list[3]
