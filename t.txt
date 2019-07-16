@@ -1,0 +1,1 @@
+DaemonsetController can't feel it when node has more resources, e.g. other Pod exits

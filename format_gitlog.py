@@ -1,15 +1,12 @@
-import re
 from repository import Repository
-from git_log import CommitLog
 
 
 with open("/srv/bug_repo_info/selected/selected_repos.txt", "r") as f:
     for line in f:
         repo = Repository(line.strip())
         filename = "{}_{}_{}.txt".format(repo.language, repo.owner, repo.name)
-        commit = CommitLog()
-        with open("/srv/bug_repo_info/selected/glf/{}".format(filename), "w") as fw:
-            fw.write("{}\t{}\t{}\t{}\n".format("COMMIT_ID", "AUTHOR", "TIME", "MESSAGE"))
+        with open("/srv/bug_repo_info/selected/merged/{}".format(filename), "w") as fw:
+            fw.write("COMMIT_ID\tAUTHOR\tTIME\tISSUE_NUMBER\tI_AUTHOR\tI_TIME\tTITLE\tDESCRIPTION\n"))
         with open("/srv/bug_repo_info/selected/gl/{}".format(filename), "r") as f1:
             for line1 in f1:
                 # m_id = re.match(r"^commit ((\d|\w)+)", line1)
