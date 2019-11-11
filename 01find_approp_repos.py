@@ -11,9 +11,9 @@ def run_query(query, headers):
 
 
 if __name__ == '__main__':
-    headers = {"Authorization": "token ec342ee42b85ef86ff276e1f45256aa50fc0f981"}
+    headers = {"Authorization": "token fa6ec218cf26b4fb957abd555fd516f24411e27e"}
 
-    with open("/srv/bug_repos/repo_star500_commit2000_list.txt", "w") as f:
+    with open("E:\\experimentalData\\repo_star500_commit2000_list.txt", "w", encoding='utf8') as f:
         f.write("LANGUAGE\tNAME\tOWNER\tSTARS\tCOMMITS\tURL\tDESCRIPTION\n")
     for lang in ["Java", "Python", "C#", "JavaScript", "PHP", "Swift", "Objective-C", "Groovy", "Go", \
             "Perl", "R", "Lua", "Scala", "Rust", "Haskell", "Clojure", "shell"]:  # C, C++, Ruby
@@ -62,9 +62,9 @@ if __name__ == '__main__':
             commits = edge["node"]["defaultBranchRef"]["target"]["history"]["totalCount"]
             if commits > 2000 and (description is None or "book" not in description.lower()):
                 count_each_lang += 1
-                with open("/srv/bug_repos/repo_star500_commit2000_list.txt", "a") as f:
+                with open("E:\\experimentalData\\repo_star500_commit2000_list.txt", "a", encoding='utf8') as f:
                     f.write(("{}\t{}\t{}\t{}\t{}\t{}\t{}\n").format(lang, name, 
                         owner, stars, commits, url, description))
-        with open("/srv/bug_repos/repo_star500_commit2000_list.txt", "a") as f:
+        with open("E:\\experimentalData\\repo_star500_commit2000_list.txt", "a", encoding='utf8') as f:
             f.write(("NOTICE: {} programming language -- {} repotories.\n").format(lang, count_each_lang))
         print(("NOTICE: {} programming language -- {} repotories.").format(lang, count_each_lang))

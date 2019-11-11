@@ -19,9 +19,9 @@ def run_query(query, headers):
 
 
 if __name__ == '__main__':
-    REPOS_DIR_PRE = "/srv/bug_repos"
+    REPOS_DIR_PRE = "E:\\experimentalData\\private\\bugRepos"
 
-    with open("/srv/bug_repo_info/selected/selected_repos.txt", "r") as f:
+    with open("E:\\experimentalData\\private\\repo_star500_commit2000_list2.txt", "r", encoding="utf8") as f:
         for line in f:
             if line[:6] != "NOTICE" and line[:8] != "LANGUAGE":
                 repo = Repository(line.strip())
@@ -29,13 +29,13 @@ if __name__ == '__main__':
                 print(line)
                 continue
 
-            headers = {"Authorization": "token 1ddd5ca713b08eed6c014c620b932ee73fbdedfd"}
+            headers = {"Authorization": "token f1388c34a9f4743f9478691e2095b2f334685dcd"}
             end_cursor = "null"
             has_next_page = True
             flag = True
 
-            with open("/srv/bug_repo_info/selected/pr/{0}_{1}_{2}.txt".format(repo.language, repo.owner, 
-                                                                             repo.name), "w") as f:
+            with open("E:\\experimentalData\\private\\pullRequests\\{0}_{1}_{2}.txt".format(repo.language, repo.owner, 
+                                                                             repo.name), "w", encoding="utf8") as f:
                 f.write("NUMBER\tTITLE\tAUTHER\tCREATE_TIME\tMERGE_COMMIT\tDESCRIPTION\t" + 
                         "FIRST_COMMENT_AUTHER\tFIRST_COMMENT_TIME\tFIRST_COMMENT\n")
 
@@ -106,7 +106,7 @@ if __name__ == '__main__':
                         merge_commit = edge["node"]["timelineItems"]["nodes"][0]["commit"]["abbreviatedOid"]
                     else:
                         merge_commit = "None"
-                        with open("/srv/bug_repo_info/pull_request/error_log.txt", "a") as f:
+                        with open("E:\\experimentalData\\private\\pullRequests\\error_log.txt", "a", encoding="utf8") as f:
                             f.write("{0}\t{1}\t{2}\t{3}\n".format(repo.language, repo.url, number, title))
                         print(str(number) + " - " + title)
 
@@ -128,8 +128,8 @@ if __name__ == '__main__':
                     first_comment_author = re.sub(r"\s+", " ", first_comment_author)
                     first_comment = re.sub(r"\s+", " ", first_comment)
 
-                    with open("/srv/bug_repo_info/selected/pr/{0}_{1}_{2}.txt".format(repo.language, repo.owner, repo.name),
-                              "a") as f:
+                    with open("E:\\experimentalData\\private\\pullRequests\\{0}_{1}_{2}.txt".format(repo.language, repo.owner, repo.name),
+                              "a", encoding="utf8") as f:
                         f.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
                             number, title, author, create_time, merge_commit, description, 
                             first_comment_author, first_comment_time, first_comment))

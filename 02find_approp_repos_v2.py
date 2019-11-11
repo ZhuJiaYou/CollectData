@@ -11,7 +11,7 @@ def run_query(query, headers):
 
 
 if __name__ == '__main__':
-    headers = {"Authorization": "token fc89f868837fbcd912ab39ea8d81d1edfdcc1c3d"}
+    headers = {"Authorization": "token fa6ec218cf26b4fb957abd555fd516f24411e27e"}
 
     for lang in ["C", "C++", "Ruby"]:  # C, C++, Ruby
         query1 = """
@@ -68,9 +68,9 @@ if __name__ == '__main__':
             commits = result2["data"]["repository"]["defaultBranchRef"]["target"]["history"]["totalCount"]
             if commits > 2000 and (description is None or "book" not in description.lower()):
                 count_each_lang += 1
-                with open("/srv/bug_repos/repo_star500_commit2000_list.txt", "a") as f:
+                with open("E:\\experimentalData\\repo_star500_commit2000_list.txt", "a", encoding='utf8') as f:
                     f.write(("{}\t{}\t{}\t{}\t{}\t{}\t{}\n").format(lang, name, owner, stars, commits,
                                                                     url, description))
-        with open("/srv/bug_repos/repo_star500_commit2000_list.txt", "a") as f:
+        with open("E:\\experimentalData\\repo_star500_commit2000_list.txt", "a", encoding='utf8') as f:
             f.write(("NOTICE: {} programming language -- {} repotories.\n").format(lang, count_each_lang))
         print(("NOTICE: {} programming language -- {} repotories.").format(lang, count_each_lang))

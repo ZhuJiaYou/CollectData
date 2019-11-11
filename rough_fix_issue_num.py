@@ -2,10 +2,10 @@ import re
 from repository import Repository
 
 
-with open("/srv/bug_repo_info/rough_issue_num.txt", "w") as fi:
+with open("E:\\experimentalData\\rough_issue_num.txt", "w", encoding="utf8") as fi:
     fi.write("REPO\tGIT_LOG\tPULL_REQUEST\n")
 
-with open("/srv/bug_repos/repo_star500_commit2000_list.txt", "r") as f:
+with open("E:\\experimentalData\\repo_star500_commit2000_list.txt", "r", encoding="utf8") as f:
     for line in f:
         if line[:6] != "NOTICE" and line[:8] != "LANGUAGE":
             repo = Repository(line.strip())
@@ -32,4 +32,3 @@ with open("/srv/bug_repos/repo_star500_commit2000_list.txt", "r") as f:
             fi.write("{}\t{}\t{}\n".format(filename, count_git_log, count_pull_request))
 
 print("ALL IS FINE!")
-

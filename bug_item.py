@@ -49,7 +49,7 @@ def generate_bug_items(filename):
 
 
 if __name__ == '__main__':
-    filename = "./../datasets/test.txt"
+    filename = "E:\\experimentalData\\public\\Eclipse_Platform_UI\\Eclipse_Platform_UI.txt"
     items = generate_bug_items(filename)
 
     print(items[1].bug_id)
@@ -61,3 +61,4 @@ if __name__ == '__main__':
     print(items[1].summary)
     print(items[1].description)
     print(items[1].commit)
+    print(len(items))
