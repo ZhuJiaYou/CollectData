@@ -1,7 +1,7 @@
 from repository import Repository
 
 
-with open("/srv/bug_repo_info/selected/selected_repos.txt", "r") as f:
+with open("E:\\experimentalData\\private\\repo_star500_commit2000_list2.txt", "r") as f:
     for line in f:
         repo = Repository(line.strip())
         filename = "{}_{}_{}.txt".format(repo.language, repo.owner, repo.name)
